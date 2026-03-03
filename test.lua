@@ -674,7 +674,7 @@ function GalaxLib:CreateWindow(opts)
             local isLeft=(si%2==1)
             local sx=isLeft and padX or (padX*2+colW)
             local sy=isLeft and colYL or colYR; local sid="s"..si
-            poolAdd(pool,sid.."_hdr","Text",{Position=pos+Vector2.new(sx+6,sy+4),Text=sec._name,Size=11,Font=FONT,Color=T.SubText,Outline=false,Transparent=false,Transparency=fd,Visible=true,ZIndex=6})
+            poolAdd(pool,sid.."_hdr","Text",{Position=pos+Vector2.new(sx+6,sy+4),Text=sec._name,Size=11,Font=FONT,Color=T.SubText,Outline=false,Transparency=fd,Visible=true,ZIndex=6})
             local wY=sy+20; local innerX=pos.X+sx+8; local innerW=colW-16
             for wi,item in ipairs(sec._widgets) do
                 local consumed=self:_renderWidget(item,pool,sid.."_w"..wi,innerX,pos.Y+wY,innerW,FONT,fd)
