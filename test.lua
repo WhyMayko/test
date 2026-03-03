@@ -200,8 +200,6 @@ function GalaxLib:CreateWindow(opts)
         _openDropId=nil, -- unique table ref of the open dropdown (Arcane pattern)
         _cpTarget=nil, _settingsListen=false,
         _snakeLines={}, _snakeCount=18,
-        _fadeAlpha=1,        -- 1=opaque 0=invisible; drives content + tab underline
-        _fadePendingTab=nil, -- tab waiting to be revealed after fade-out completes
     }
     for i=1,WIN._snakeCount do
         WIN._snakeLines[i]=newDraw("Line",{Thickness=1.5,Color=T.Accent,Visible=false,ZIndex=50})
@@ -683,31 +681,10 @@ function GalaxLib:CreateWindow(opts)
             local open=(self._openTab==tab)
             poolAdd(pool,"tab_bg_"..i, "Square",{Position=tpos,Size=tsz,Filled=true,Color=open and T.Surface1 or T.Surface0,Visible=true,ZIndex=3})
             poolAdd(pool,"tab_txt_"..i,"Text",  {Position=tpos+Vector2.new(tw/2,tabH/2-6),Text=tab._name,Size=13,Font=FONT,Color=open and T.Text or T.SubText,Center=true,Outline=false,Visible=true,ZIndex=4})
-            if open then
-                -- underline fades in together with the content
-                poolAdd(pool,"tab_ul_"..i,"Square",{Position=tpos+Vector2.new(0,tabH-2),Size=Vector2.new(tw,2),Filled=true,Color=T.Accent,Transparency=1-self._fadeAlpha,Visible=true,ZIndex=4})
+            if open then poolAdd(pool,"tab_ul_"..i,"Square",{Position=tpos+Vector2.new(0,tabH-2),Size=Vector2.new(tw,2),Filled=true,Color=T.Accent,Visible=true,ZIndex=4})
             else poolHide(pool,"tab_ul_"..i) end
-            if Input.click and over(tpos,tsz) and tab ~= self._openTab and not self._fadePendingTab then
-                self._fadePendingTab = tab
-                self._openDropId=nil; self._textboxTarget=nil; self._cpTarget=nil
-                local HALF = 0.12   -- seconds per half (out + in = 0.24 s total)
-                task.spawn(function()
-                    local t0 = tick()
-                    -- Phase 1: fade OUT current tab (alpha 1 -> 0)
-                    repeat task.wait()
-                        self._fadeAlpha = 1 - math.min((tick()-t0)/HALF, 1)
-                    until tick()-t0 >= HALF
-                    self._fadeAlpha = 0
-                    -- Switch to the new tab at the darkest point
-                    self._openTab = self._fadePendingTab
-                    -- Phase 2: fade IN new tab (alpha 0 -> 1)
-                    t0 = tick()
-                    repeat task.wait()
-                        self._fadeAlpha = math.min((tick()-t0)/HALF, 1)
-                    until tick()-t0 >= HALF
-                    self._fadeAlpha = 1
-                    self._fadePendingTab = nil
-                end)
+            if Input.click and over(tpos,tsz) then
+                self._openTab=tab; self._openDropId=nil; self._textboxTarget=nil; self._cpTarget=nil
             end
             tabX=tabX+tw+5
         end
@@ -731,17 +708,6 @@ function GalaxLib:CreateWindow(opts)
             if isLeft then colYL=colYL+secH+12 else colYR=colYR+secH+12 end
         end
         poolFlush(pool)
-        -- Fade pass: apply _fadeAlpha to all content objects (IDs starting with "s")
-        -- Chrome (window frame, tab bar, watermark) uses IDs like "win_*", "top_*",
-        -- "tab_*", "wm_*" -- never "s", so they stay fully opaque.
-        if self._fadeAlpha < 1 then
-            local inv = 1 - self._fadeAlpha
-            for id, obj in pairs(pool.d) do
-                if id:sub(1,1) == "s" then
-                    obj.Transparency = inv
-                end
-            end
-        end
     end
 
     -- ── Main loop ────────────────────────────────────────────
