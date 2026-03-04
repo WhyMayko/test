@@ -418,7 +418,7 @@ function GalaxLib:CreateWindow(opts)
             local bpos=Vector2.new(wx,wy); local bsz=Vector2.new(innerW,22); local hov=over(bpos,bsz)
             poolAdd(pool,wid.."_btn", "Square",{Position=bpos,Size=bsz,Filled=true, Color=hov and T.AccentDark or T.Surface1,Visible=true,ZIndex=6})
             poolAdd(pool,wid.."_btnb","Square",{Position=bpos,Size=bsz,Filled=false,Color=hov and T.Accent or T.Border0,Thickness=1,Visible=true,ZIndex=7})
-            poolAdd(pool,wid.."_btnt","Text",  {Position=bpos+Vector2.new(innerW/2,4),Text=item.label,Size=13,Font=FONT,Color=T.Text,Center=true,Outline=false,Visible=true,ZIndex=7})
+            poolAdd(pool,wid.."_btnt","Text",  {Position=bpos+Vector2.new(innerW/2,bsz.Y/2-6),Text=item.label,Size=13,Font=FONT,Color=T.Text,Center=true,Outline=false,Visible=true,ZIndex=7})
             if Input.click and hov then item.cb() end
             wY=28
 
@@ -640,7 +640,7 @@ function GalaxLib:CreateWindow(opts)
             local bpos=Vector2.new(wx,wy); local bsz=Vector2.new(innerW,22); local hov=over(bpos,bsz)
             poolAdd(pool,wid.."_btn", "Square",{Position=bpos,Size=bsz,Filled=true, Color=hov and T.RedDark or T.Surface1,Visible=true,ZIndex=6})
             poolAdd(pool,wid.."_btnb","Square",{Position=bpos,Size=bsz,Filled=false,Color=hov and T.Red or T.Border0,Thickness=1,Visible=true,ZIndex=7})
-            poolAdd(pool,wid.."_btnt","Text",  {Position=bpos+Vector2.new(innerW/2,4),Text=item.label,Size=13,Font=FONT,Color=T.Red,Center=true,Outline=false,Visible=true,ZIndex=7})
+            poolAdd(pool,wid.."_btnt","Text",  {Position=bpos+Vector2.new(innerW/2,bsz.Y/2-6),Text=item.label,Size=13,Font=FONT,Color=T.Red,Center=true,Outline=false,Visible=true,ZIndex=7})
             if Input.click and hov then self:Notify("Script killed.",self.Title,2); self._running=false end
             wY=28
         end
